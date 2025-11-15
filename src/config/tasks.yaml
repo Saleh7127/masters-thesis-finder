@@ -1,0 +1,76 @@
+search_jobs_task:
+  description: >
+    Search for at least 15 master's thesis positions in {location}
+    related to "{field}". Use the serper_tool to find job postings.
+    For each result, use scrape_website_tool to get the full job description.
+    Return a JSON list with items containing:
+    - title
+    - company_or_institution
+    - url
+    - raw_description (from scraped website content)
+  expected_output: >
+    JSON list of raw job postings with scraped content.
+  agent: job_searcher
+
+parse_jobs_task:
+  description: >
+    Using the output from search_jobs_task, transform each raw job posting
+    into structured JSON with these fields:
+    - title
+    - company_or_institution
+    - url
+    - location
+    - required_skills (list)
+    - preferred_skills (list)
+    - description_summary (2-3 sentences)
+    - language_requirements
+    - thesis_topics (if mentioned)
+  expected_output: >
+    JSON list of structured job information.
+  agent: job_parser
+  context:
+    - search_jobs_task
+
+parse_resume_task:
+  description: >
+    Using the resume PDF knowledge source, extract and structure:
+    - name (if found)
+    - degree
+    - university
+    - technical_skills (list)
+    - programming_languages (list)
+    - research_experience (summarized)
+    - thesis_interests (if mentioned)
+    - relevant_projects (title + 1-2 line summary each)
+    - education_background
+  expected_output: >
+    JSON object representing the candidate profile extracted from resume.
+  agent: resume_parser
+
+match_jobs_task:
+  description: >
+    Using the structured jobs from parse_jobs_task and the candidate profile
+    from parse_resume_task, compute a fit_score (0-100) for each job based on:
+    - required_skill match percentage
+    - preferred_skill match percentage
+    - research/thesis topic alignment
+    - language requirements compatibility
+    - educational background fit
+    Sort all jobs by fit_score in descending order.
+    Output ONLY a valid JSON array with the top {top_k} matches, each containing:
+    - rank (integer, 1-based)
+    - title (string)
+    - company_or_institution (string)
+    - url (string)
+    - location (string)
+    - fit_score (integer, 0-100)
+    - match_summary (string, 2-3 sentences explaining why this is a good match)
+    - required_skills_match (list of matched required skills)
+    - preferred_skills_match (list of matched preferred skills)
+  expected_output: >
+    A valid JSON array of the top {top_k} best matching positions with all fields.
+    Example format: [{"rank": 1, "title": "...", "company_or_institution": "...", ...}, ...]
+  agent: matcher
+  context:
+    - parse_jobs_task
+    - parse_resume_task

@@ -1,0 +1,8 @@
+crewai
+crewai-tools
+openai
+pydantic
+pypdf
+requests
+beautifulsoup4
+python-dotenv
