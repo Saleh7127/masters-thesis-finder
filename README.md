@@ -1,6 +1,6 @@
 # Master's Thesis Position Finder
 
-An AI-powered application built with CrewAI that helps students find master's thesis positions by matching their resume with available positions in specified countries and fields.
+A simple Multi Agent Systems(MAS) built with CrewAI that helps to find master's thesis positions by matching the resume with available positions in specified countries and fields.
 
 ## Overview
 
@@ -181,13 +181,11 @@ resume_pdf = PDFKnowledgeSource(
 - Check that keys have sufficient credits/quota
 
 ### Resume Not Found
-- Verify resume PDF is in `knowledge/` directory
 - Ensure filename in `knowledge/` matches the filename in `src/crew.py`
 - Check file permissions are readable
 
 ### No Results Found
 - Try different search terms
-- Check internet connection
 - Verify Serper API is working
 - Review agent output for error messages
 
@@ -202,3 +200,5 @@ resume_pdf = PDFKnowledgeSource(
 - Search results depend on Serper API availability
 - PDF parsing quality depends on resume format
 - Matching accuracy depends on LLM quality and task descriptions
+
+Note: This is a learn-and-experiment project.
